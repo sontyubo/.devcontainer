@@ -1,22 +1,9 @@
-# ベースイメージとしてUbuntuを使用
-FROM ubuntu:22.04
+FROM eclipse-temurin:17-jdk
 
-# パッケージリストを更新し、基本的なツールをインストール
-RUN apt-get update && \
-    apt-get install -y \
-    build-essential \
-    curl \
-    wget \
-    vim \
-    git \
-    && apt-get clean
+RUN apt-get update &&\
+    apt-get install -y graphviz
 
-# タイムゾーンを設定
-ENV TZ=Asia/Tokyo
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apt update && apt install -y default-jre graphviz fonts-ipafont
 
-# 作業ディレクトリの設定
-WORKDIR /workspace
 
-# コンテナが起動したときに実行されるコマンド（bashを起動）
-# CMD ["bash"]
+ENV GRAPHVIZ_DOT=/usr/bin/dot
