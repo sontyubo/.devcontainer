@@ -1,1 +1,1 @@
-# Linux_ubuntu:22.04
+# eclipse-temurin:17-jdk
