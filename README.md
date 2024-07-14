@@ -3,3 +3,7 @@
 ### docker-composeとdevcontainer.jsonの違い
 * devcontainerはあくまでvscodeの設定ファイル
 * docker-composeはコンテナ同士の連携やコンテナの詳細について記述する
+### Dockerへの理解
+* vscode経由でDockerを使う時は、Docker内にvscodeをインストールして使っている
+* Dockerにubuntuを入れ、その上にDockerで開発環境を作るケースもありうる
+* sshでリモートのDockerと通信させる時はベースとなるOSとローカルが通信をする
