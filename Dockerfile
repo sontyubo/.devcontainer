@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libpng-dev \
     libtiff-dev \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
     curl \
     git \
     && apt-get clean \
