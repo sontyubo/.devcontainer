@@ -22,11 +22,8 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 # Poetryのパスを設定
 ENV PATH="/root/.local/bin:$PATH"
 
-# pyproject.tomlとpoetry.lockをコンテナのrootにコピー
-COPY pyproject.toml poetry.lock ./
+RUN poetry config virtualenvs.in-project true
 
-# ライブラリをインストール
-RUN poetry install
 
 # デフォルトの実行コマンド
 # WORKDIR /semantic_seg
