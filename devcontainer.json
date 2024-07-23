@@ -33,7 +33,7 @@
 				"ms-azuretools.vscode-docker",
 				"vscjava.vscode-java-pack",
 				"vscjava.vscode-gradle",
-				"vmware.vscode-boot-dev-pack",
+				//"vmware.vscode-boot-dev-pack",
 				"jebbs.plantuml"
 			]
 		}
