@@ -14,3 +14,8 @@
 ### ソースコードを読むの大事
 * 解説ブログを信じていたが、ソースコードを辿っていくとブログでDLと紹介されていたファイル名が違うことに気づく
 * そこを治したら解決した
+
+# 参考URL
+* 制作者_github - https://github.com/CartoonSegmentation/CartoonSegmentation?tab=readme-ov-file
+* 制作者_hunggingface - https://huggingface.co/dreMaz/AnimeInstanceSegmentation/tree/main
+* CartoonSegmentationをDockerで動かす - https://zenn.dev/tatexh/articles/5bd1b3ef552a5b
