@@ -7,7 +7,9 @@ RUN apt-get update && \
     sudo \
     wget \
     vim \
-    git
+    git \
+    git-lfs && \
+    git lfs install
     
 WORKDIR /opt
 
@@ -52,7 +54,9 @@ RUN pip install -U openmim && \
     mim install "mmcv==2.1.0" mmdet mmengine && \
     pip install jupyter && \
     pip install -U "huggingface_hub[cli]" && \
-    pip install -r requirements.txt
+    pip install -r requirements.txt && \
+    git config --global --add safe.directory '/workspaces/CartoonSegmentation'
+    #huggingface-cli lfs-enable-largefiles .
 
 # SHELLを戻す
 SHELL ["/bin/sh", "-c"]
