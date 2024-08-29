@@ -1,67 +1,35 @@
-# CUDAイメージ
-FROM nvidia/cuda:11.8.0-devel-ubuntu20.04
+FROM pytorch/pytorch:1.13.1-cuda11.6-cudnn8-devel
 
-# conda環境の構築
-RUN apt-get update && \
-    apt-get install -y \
-    sudo \
-    wget \
-    vim \
-    git \
-    git-lfs && \
-    git lfs install
+# Arguments to build Docker Image using CUDA
+ARG USE_CUDA=0
+ARG TORCH_ARCH=
+
+ENV AM_I_DOCKER True
+ENV BUILD_WITH_CUDA "${USE_CUDA}"
+ENV TORCH_CUDA_ARCH_LIST "${TORCH_ARCH}"
+ENV CUDA_HOME /usr/local/cuda-11.6/
+
+RUN mkdir -p /home/appuser/Grounded-Segment-Anything
+COPY . /home/appuser/Grounded-Segment-Anything/
+
+RUN apt-get update && apt-get install --no-install-recommends wget ffmpeg=7:* \
+    libsm6=2:* libxext6=2:* git=1:* nano=2.* \
+    vim=2:* -y \
+    && apt-get clean && apt-get autoremove && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /home/appuser/Grounded-Segment-Anything
+RUN python -m pip install --no-cache-dir -e segment_anything
+
+# When using build isolation, PyTorch with newer CUDA is installed and can't compile GroundingDINO
+RUN python -m pip install --no-cache-dir wheel
+RUN python -m pip install --no-cache-dir --no-build-isolation -e GroundingDINO
+
+WORKDIR /home/appuser
+
+# supervisionのバージョンを指定
+RUN pip install --no-cache-dir diffusers[torch]==0.15.1 opencv-python==4.7.0.72 \
+    pycocotools==2.0.6 matplotlib==3.5.3 \
+    onnxruntime==1.14.1 onnx==1.13.1 ipykernel==6.16.2 scipy gradio openai
     
-WORKDIR /opt
+RUN pip install supervision==0.21.0
 
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-    sh Miniconda3-latest-Linux-x86_64.sh -b -p /opt/miniconda3 && \
-    rm -r Miniconda3-latest-Linux-x86_64.sh
-
-ENV PATH /opt/miniconda3/bin:$PATH
-
-COPY ./.devcontainer/conda_env.yml .
-
-# conda env createは、conda_env.ymlの内容を修正して実行可能になった
-# condaからpytorchを入れるのをやめる
-# python3.10をconda.ymlから指定
-# init bashに変更
-RUN conda update -n base -c defaults conda && \
-    conda env create -n CartoonSegmentation -f conda_env.yml && \
-    conda init bash && \
-    conda config --set auto_activate_base false
-    #echo "conda activate CartoonSegmentation" >> ~/.bashrc
-    
-# CONDA_DEFAULT_ENV：デフォルトの環境名,condaコマンドがデフォルトでこの仮想環境を指定する
-# ENV PATH：環境内の python や pip などのコマンドがローカルより優先される
-ENV CONDA_DEFAULT_ENV CartoonSegmentation && \
-   PATH /opt/conda/envs/CartoonSegmentation/bin:$PATH
-
-# -------------------------------------- #
-# conda環境に入る（環境に入っていないとローカルのpipを呼び出す）
-SHELL ["conda", "run", "-n", "CartoonSegmentation", "/bin/bash", "-c"]
-
-# requirementsをコンテナ内に追加
-COPY ./requirements.txt .
-
-# その他のライブラリをインストール
-RUN pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118 
-
-RUN pip install --upgrade pip && \
-    pip install -f https://download.pytorch.org/whl/torch_stable.html torch==2.1.0+cu118 && \
-    pip install -f https://download.pytorch.org/whl/torch_stable.html torchvision==0.16.0+cu118
-
-RUN pip install -U openmim && \
-    mim install "mmcv==2.1.0" mmdet mmengine && \
-    pip install jupyter && \
-    pip install -U "huggingface_hub[cli]" && \
-    pip install -r requirements.txt && \
-    git config --global --add safe.directory '/workspaces/CartoonSegmentation'
-    #huggingface-cli lfs-enable-largefiles .
-
-# SHELLを戻す
-SHELL ["/bin/sh", "-c"]
-# -------------------------------------- #
-
-# コンテナを起動後、conda仮想環境に自動で入る
-#WORKDIR $HOME/CartoonSegmentation
-#CMD ["/bin/bash"]
