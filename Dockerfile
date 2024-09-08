@@ -34,7 +34,7 @@ RUN conda update -n base -c defaults conda && \
 # CONDA_DEFAULT_ENV：デフォルトの環境名,condaコマンドがデフォルトでこの仮想環境を指定する
 # ENV PATH：環境内の python や pip などのコマンドがローカルより優先される
 ENV CONDA_DEFAULT_ENV CartoonSegmentation && \
-   PATH /opt/conda/envs/CartoonSegmentation/bin:$PATH
+    PATH /opt/conda/envs/CartoonSegmentation/bin:$PATH
 
 # -------------------------------------- #
 # conda環境に入る（環境に入っていないとローカルのpipを呼び出す）
@@ -43,8 +43,8 @@ SHELL ["conda", "run", "-n", "CartoonSegmentation", "/bin/bash", "-c"]
 # requirementsをコンテナ内に追加
 COPY ./requirements.txt .
 
-# その他のライブラリをインストール
-RUN pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118 
+# その他のライブラリをインストール【いらないはず、次にコンテナをちゃんと起動できたなら消す】
+#RUN pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118 
 
 RUN pip install --upgrade pip && \
     pip install -f https://download.pytorch.org/whl/torch_stable.html torch==2.1.0+cu118 && \
